@@ -1,14 +1,14 @@
 package org.schabi.newpipe.about;
 
-import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
-import android.os.AsyncTask;
+import android.os.Bundle;
 import android.util.Base64;
 import android.webkit.WebView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.DialogFragment;
 
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.util.ThemeHelper;
@@ -16,17 +16,22 @@ import org.schabi.newpipe.util.ThemeHelper;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.ref.WeakReference;
 import java.nio.charset.StandardCharsets;
 
 import static org.schabi.newpipe.util.Localization.assureCorrectAppLanguage;
 
-public class LicenseFragmentHelper extends AsyncTask<Object, Void, Integer> {
-    private final WeakReference<Activity> weakReference;
-    private License license;
+public class LicenseDialog extends DialogFragment {
+    private static final String LICENSE = "license";
 
-    public LicenseFragmentHelper(@Nullable final Activity activity) {
-        weakReference = new WeakReference<>(activity);
+    public static LicenseDialog newInstance(final License license) {
+        if (license == null) {
+            throw new NullPointerException("license is null");
+        }
+        final LicenseDialog fragment = new LicenseDialog();
+        final Bundle bundle = new Bundle();
+        bundle.putParcelable(LICENSE, license);
+        fragment.setArguments(bundle);
+        return fragment;
     }
 
     /**
@@ -59,7 +64,7 @@ public class LicenseFragmentHelper extends AsyncTask<Object, Void, Integer> {
     }
 
     /**
-     * @param context
+     * @param context the context to use
      * @return String which is a CSS stylesheet according to the context's theme
      */
     private static String getLicenseStylesheet(final Context context) {
@@ -88,41 +93,28 @@ public class LicenseFragmentHelper extends AsyncTask<Object, Void, Integer> {
         return context.getResources().getString(color).substring(3);
     }
 
-    @Nullable
-    private Activity getActivity() {
-        final Activity activity = weakReference.get();
-
-        if (activity != null && activity.isFinishing()) {
-            return null;
-        } else {
-            return activity;
-        }
-    }
-
+    @NonNull
     @Override
-    protected Integer doInBackground(final Object... objects) {
-        license = (License) objects[0];
-        return 1;
-    }
+    public Dialog onCreateDialog(final Bundle savedInstanceState) {
+        assureCorrectAppLanguage(requireContext());
+        final License license = getArguments().getParcelable(LICENSE);
 
-    @Override
-    protected void onPostExecute(final Integer result) {
-        final Activity activity = getActivity();
-        if (activity == null) {
-            return;
-        }
-
-        final String webViewData = Base64.encodeToString(getFormattedLicense(activity, license)
-                .getBytes(StandardCharsets.UTF_8), Base64.NO_PADDING);
-        final WebView webView = new WebView(activity);
+        final WebView webView = new WebView(requireActivity());
+        final boolean isLightTheme = ThemeHelper.isLightThemeSelected(requireActivity());
+        // to prevent flickering
+        webView.setBackgroundColor(getResources().getColor(isLightTheme
+                ? R.color.light_license_background_color
+                : R.color.dark_license_background_color));
+        final String webViewData = Base64.encodeToString(
+                getFormattedLicense(requireActivity(), license)
+                        .getBytes(StandardCharsets.UTF_8), Base64.NO_PADDING);
         webView.loadData(webViewData, "text/html; charset=UTF-8", "base64");
 
-        final AlertDialog.Builder alert = new AlertDialog.Builder(activity);
+        final AlertDialog.Builder alert = new AlertDialog.Builder(requireActivity());
         alert.setTitle(license.getName());
         alert.setView(webView);
-        assureCorrectAppLanguage(activity);
-        alert.setNegativeButton(activity.getString(R.string.finish),
+        alert.setNegativeButton(requireActivity().getString(R.string.finish),
                 (dialog, which) -> dialog.dismiss());
-        alert.show();
+        return alert.create();
     }
 }
