@@ -23,7 +23,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import org.schabi.newpipe.MainActivity;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.RouterActivity;
-import org.schabi.newpipe.about.AboutActivity;
+import org.schabi.newpipe.about.AboutFragment;
 import org.schabi.newpipe.database.feed.model.FeedGroupEntity;
 import org.schabi.newpipe.download.DownloadActivity;
 import org.schabi.newpipe.extractor.NewPipe;
@@ -427,7 +427,7 @@ public final class NavigationHelper {
 
     public static void openAboutFragment(final FragmentManager fragmentManager) {
         defaultTransaction(fragmentManager)
-                .replace(R.id.fragment_holder, new AboutActivity())
+                .replace(R.id.fragment_holder, new AboutFragment())
                 .addToBackStack(null)
                 .commit();
     }
