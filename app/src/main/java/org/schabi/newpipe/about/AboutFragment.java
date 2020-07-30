@@ -26,7 +26,7 @@ import org.schabi.newpipe.util.ThemeHelper;
 import static org.schabi.newpipe.util.Localization.assureCorrectAppLanguage;
 import static org.schabi.newpipe.util.ShareUtils.openUrlInBrowser;
 
-public class AboutActivity extends BaseFragment {
+public class AboutFragment extends BaseFragment {
     /**
      * List of all software components.
      */
@@ -109,22 +109,22 @@ public class AboutActivity extends BaseFragment {
     /**
      * A placeholder fragment containing a simple view.
      */
-    public static class AboutFragment extends Fragment {
-        public AboutFragment() { }
+    public static class AboutAppFragment extends Fragment {
+        public AboutAppFragment() { }
 
         /**
          * Created a new instance of this fragment for the given section number.
          *
-         * @return New instance of {@link AboutFragment}
+         * @return New instance of {@link AboutAppFragment}
          */
-        public static AboutFragment newInstance() {
-            return new AboutFragment();
+        public static AboutAppFragment newInstance() {
+            return new AboutAppFragment();
         }
 
         @Override
         public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
                                  final Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_about, container, false);
+            View rootView = inflater.inflate(R.layout.fragment_about_app, container, false);
             Context context = this.getContext();
 
             TextView version = rootView.findViewById(R.id.app_version);
@@ -164,7 +164,7 @@ public class AboutActivity extends BaseFragment {
         public Fragment getItem(final int position) {
             switch (position) {
                 case 0:
-                    return AboutFragment.newInstance();
+                    return AboutAppFragment.newInstance();
                 case 1:
                     return LicenseFragment.newInstance(SOFTWARE_COMPONENTS);
             }
