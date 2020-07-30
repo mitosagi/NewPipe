@@ -286,7 +286,7 @@ public class MainActivity extends AppCompatActivity {
                 NavigationHelper.openSettings(this);
                 break;
             case ITEM_ID_ABOUT:
-                NavigationHelper.openAbout(this);
+                NavigationHelper.openAboutFragment(getSupportFragmentManager());
                 break;
         }
     }

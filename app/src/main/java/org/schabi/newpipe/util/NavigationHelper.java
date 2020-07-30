@@ -425,6 +425,13 @@ public final class NavigationHelper {
                 .commit();
     }
 
+    public static void openAboutFragment(final FragmentManager fragmentManager) {
+        defaultTransaction(fragmentManager)
+                .replace(R.id.fragment_holder, new AboutActivity())
+                .addToBackStack(null)
+                .commit();
+    }
+
     /*//////////////////////////////////////////////////////////////////////////
     // Through Intents
     //////////////////////////////////////////////////////////////////////////*/
@@ -479,11 +486,6 @@ public final class NavigationHelper {
         mIntent.setData(Uri.parse(url));
         mIntent.putExtra(RouterActivity.INTERNAL_ROUTE_KEY, true);
         context.startActivity(mIntent);
-    }
-
-    public static void openAbout(final Context context) {
-        Intent intent = new Intent(context, AboutActivity.class);
-        context.startActivity(intent);
     }
 
     public static void openSettings(final Context context) {

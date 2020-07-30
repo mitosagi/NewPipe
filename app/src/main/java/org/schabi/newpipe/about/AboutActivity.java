@@ -3,13 +3,12 @@ package org.schabi.newpipe.about;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
@@ -19,6 +18,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
 
+import org.schabi.newpipe.BaseFragment;
 import org.schabi.newpipe.BuildConfig;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.util.ThemeHelper;
@@ -26,7 +26,7 @@ import org.schabi.newpipe.util.ThemeHelper;
 import static org.schabi.newpipe.util.Localization.assureCorrectAppLanguage;
 import static org.schabi.newpipe.util.ShareUtils.openUrlInBrowser;
 
-public class AboutActivity extends AppCompatActivity {
+public class AboutActivity extends BaseFragment {
     /**
      * List of all software components.
      */
@@ -80,40 +80,30 @@ public class AboutActivity extends AppCompatActivity {
     private ViewPager mViewPager;
 
     @Override
-    protected void onCreate(final Bundle savedInstanceState) {
-        assureCorrectAppLanguage(this);
+    public void onCreate(final Bundle savedInstanceState) {
+        assureCorrectAppLanguage(requireContext());
         super.onCreate(savedInstanceState);
-        ThemeHelper.setTheme(this);
-        this.setTitle(getString(R.string.title_activity_about));
-
-        setContentView(R.layout.activity_about);
-
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        // Create the adapter that will return a fragment for each of the three
-        // primary sections of the activity.
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-
-        // Set up the ViewPager with the sections adapter.
-        mViewPager = findViewById(R.id.container);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
-
-        TabLayout tabLayout = findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(mViewPager);
+        ThemeHelper.setTheme(requireActivity());
     }
 
+    @Nullable
     @Override
-    public boolean onOptionsItemSelected(final MenuItem item) {
-        int id = item.getItemId();
+    public View onCreateView(@NonNull final LayoutInflater inflater,
+                             @Nullable final ViewGroup container,
+                             @Nullable final Bundle savedInstanceState) {
+        setTitle(getString(R.string.title_activity_about));
+        final View rootView = inflater.inflate(R.layout.fragment_about, container, false);
 
-        switch (id) {
-            case android.R.id.home:
-                finish();
-                return true;
-        }
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getChildFragmentManager());
 
-        return super.onOptionsItemSelected(item);
+        // Set up the ViewPager with the sections adapter.
+        mViewPager = rootView.findViewById(R.id.container);
+        mViewPager.setAdapter(mSectionsPagerAdapter);
+
+        final TabLayout tabLayout = rootView.findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(mViewPager);
+
+        return rootView;
     }
 
     /**
